@@ -20,6 +20,7 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
 	<script src="leaflet.js"></script>
+	<script src="worker.js"></script>
 	<script src="qr-scanner.js"></script>
 	<script src="QrTest.js"></script>
     <!--                                           -->
@@ -36,7 +37,6 @@
   <!-- to create a completely dynamic UI.        -->
   <!--                                           -->
   <body>
-
     <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
     <noscript>
       <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
@@ -44,20 +44,7 @@
         in order for this application to display correctly.
       </div>
     </noscript>
-
-    <h1>Web Application Starter Project</h1>
-
-    <table align="center">
-      <tr>
-        <td colspan="2" style="font-weight:bold;">Please enter your name:</td>        
-      </tr>
-      <tr>
-        <td id="nameFieldContainer"></td>
-        <td id="sendButtonContainer"></td>
-      </tr>
-      <tr>
-        <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
-      </tr>
-    </table>
+    
+	<video muted autoplay playsinline id="qr-video"></video>
   </body>
 </html>

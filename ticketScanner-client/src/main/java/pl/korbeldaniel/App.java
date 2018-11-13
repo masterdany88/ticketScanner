@@ -37,11 +37,12 @@ public class App implements EntryPoint {
 	public void onModuleLoad() {
 //		Window.alert("TET");
 		  Circle circle = L.circle(L.latLng(51.508, 11), new CircleOptions.Builder().build());
-//		  QrScanner scanner = new QrScanner(
-//			  		DomGlobal.document.getElementById("qr-video2"),
-//			  		result -> DomGlobal.console.log("decoded qa code:", result)
-//			  		);
 		  QrTest test = new QrTest();
 		  test.start();
+		  QrScanner scanner = new QrScanner(
+			  		DomGlobal.document.getElementById("qr-video"),
+			  		result -> DomGlobal.console.log("decoded qa code:", result)
+			  		);
+		  scanner.start();
 	}
 }
