@@ -19,8 +19,6 @@
 <title>QrTicketScanner</title>
 
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" ame="viewport"> 
-<link type="text/css" rel="stylesheet" href="{module-short-name}/css/domino-ui.css"> 
-<link type="text/css" rel="stylesheet" href="{module-short-name}/css/themes/all-themes.css">
 </head>
 
 <!--                                           -->
@@ -36,8 +34,10 @@
 			Your web browser must have JavaScript enabled in order for this
 			application to display correctly.</div>
 	</noscript>
-
-	<video muted autoplay playsinline id="qr-video"></video>
+	<div id="topBar"></div>
+	<video muted autoplay playsinline id="qr-video" width="25%" height="25%"></video>
+	<div id="bottomBar"></div>
+	
 	<script type="module">
 		import QrScanner from "/qr-scanner.min.js";
 		window.QrScanner = QrScanner;
