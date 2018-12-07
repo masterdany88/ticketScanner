@@ -29,17 +29,16 @@
 		</dependency>
 
 		<!-- RestyGWT -->
-		<dependency>
-			<groupId>org.fusesource.restygwt</groupId>
-			<artifactId>restygwt</artifactId>
-			<!-- <version>2.0.3</version> -->
-			<version>2.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0</version>
-		</dependency>
+		            <dependency>
+                <groupId>org.fusesource.restygwt</groupId>
+                <artifactId>restygwt</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
@@ -92,7 +91,7 @@
 			<artifactId>jersey-container-servlet</artifactId>
 			<version>2.16</version>
 		</dependency>
-		
+
 <!-- 		<dependency>
 			<groupId>org.jboss.gwt.elemento</groupId>
 			<artifactId>elemento-core</artifactId>
