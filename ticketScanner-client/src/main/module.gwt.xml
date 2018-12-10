@@ -2,13 +2,13 @@
 <module>
   <inherits name="com.google.gwt.user.User" />
   <inherits name="com.google.gwt.user.theme.clean.Clean" />
-  <inherits name='com.gwidgets.api.GwtyLeaflet' />
+  <inherits name='pl.korbeldaniel.gwt-qr-scanner' />
   <inherits name='org.fusesource.restygwt.RestyGWT' />
   <set-configuration-property name="org.fusesource.restygwt.annotationresolver" value="org.fusesource.restygwt.rebind.ModelChangeAnnotationResolver" />
-  
+
 <!--   <inherits name="org.jboss.gwt.elemento.Core"/>
   <inherits name="org.dominokit.domino.ui.DominoUI"/> -->
-  
+
   <source path="" />
 
   <entry-point class="pl.korbeldaniel.App" />

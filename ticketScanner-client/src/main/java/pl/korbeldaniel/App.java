@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwidgets.api.leaflet.QrScanner;
-import com.gwidgets.api.leaflet.QrTest;
+import pl.korbeldaniel.qrscanner.QrScanner;
 
 import elemental2.dom.DomGlobal;
 
@@ -43,19 +43,22 @@ public class App implements EntryPoint {
 	private QrScanner scanner;
 	private EventRestService service;
 	private boolean isCameraStarted;
-	protected List<Ticket> currentEventTickets;
-	
+	private VerticalPanel ticketsWidget;
+	protected Map<String, Ticket> ticketsByQrCode;
+
 	public void onModuleLoad() {
 		initPinRequest();
 		initRest();
 		//initFlashButton();
 		initScanner();
-		
+
 	}
-	
+
 	private void initPinRequest() {
+		ticketsWidget = new VerticalPanel();
 		VerticalPanel pinRequestBox = new VerticalPanel();
 		TextBox pinTextBox = new TextBox();
+		pinTextBox.setValue("9476176");
 		Button pinSubmitButton = new Button("Zatwierdź");
 		pinSubmitButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -69,17 +72,18 @@ public class App implements EntryPoint {
 		pinRequestBox.add(pinTextBox);
 		pinRequestBox.add(pinSubmitButton);
 		RootPanel.get().add(pinRequestBox);
+		RootPanel.get().add(ticketsWidget);
 	}
-	
+
 	private void initRest() {
     	Defaults.setAddXHttpMethodOverrideHeader(false);
 	    service = GWT.create(EventRestService.class);
 	}
 
 	private void initEvents() {
-	    service.getByPinAndDate(pin, "2018-11-15", getEventHandler());
+	    service.getByPinAndDate(pin, "2018-12-31", getEventHandler());
 	}
-	
+
 	private MethodCallback<EventRestResponse> getEventHandler() {
 		return new MethodCallback<EventRestResponse>() {
 			@Override
@@ -104,15 +108,15 @@ public class App implements EntryPoint {
 				Window.alert("Failed to get events: "  + exception.getMessage());
 			}
 		};
-		
+
 	}
-	
+
 	private void initTicketScanner() {
 		fetchTicketsList();
 	}
-	
+
 	private void fetchTicketsList() {
-		service.getTicketsByEventId(selectedEventId, getTicketHandler());
+		service.getTicketsByPinAndEventId(pin, selectedEventId, getTicketHandler());
 	}
 
 	private MethodCallback<TicketRestResponse> getTicketHandler() {
@@ -124,14 +128,11 @@ public class App implements EntryPoint {
 			@Override
 			public void onSuccess(Method method, TicketRestResponse response) {
 				RootPanel.get("topBar").clear();
-				currentEventTickets = response.tickets;
+				ticketsByQrCode = new LinkedHashMap<>();
 				for (Ticket ticket : response.tickets) {
-					Label label = new Label(ticket.toString());
-					if(ticket.checked) {
-						label.getElement().getStyle().setBackgroundColor("GREEN");
-					}
-					RootPanel.get("topBar").add(label);
+					ticketsByQrCode.put(ticket.qrCode, ticket);
 				}
+				updateTicketsWidget();
 				initCameraButton();
 			}
 		};
@@ -167,11 +168,11 @@ public class App implements EntryPoint {
 		});
 		RootPanel.get("topBar").add(flashButton);
 	}
-	
+
 	private void initScanner() {
 		scanner = new QrScanner(DomGlobal.document.getElementById("qr-video"),
 				result -> handleScannedQrCode(result),
-				"1200");
+				"500");
 	}
 
 	private void handleScannedQrCode(String result) {
@@ -179,10 +180,47 @@ public class App implements EntryPoint {
 		audio.setSrc("/js/ticketScanner/audio/scan.mp3");
 		audio.play();
 		DomGlobal.console.log("decoded qa code:", result);
-		RootPanel.get("bottomBar").add(new Label(getCurrentTime() + " " + result));
-		Ticket tempTicket = new Ticket(result);
-		if(currentEventTickets.contains(tempTicket)) {
-			Window.alert("Zatwierdzono bilet: " + currentEventTickets.get(currentEventTickets.indexOf(tempTicket)).ownerFirstame);
+		Ticket tempTicket = ticketsByQrCode.get(result);
+		if(tempTicket == null) {
+			RootPanel.get("bottomBar").add(new Label(getCurrentTime() + " " + result));
+		} else {
+			handleValidatedTicket(tempTicket);
+		}
+	}
+
+	private void handleValidatedTicket(Ticket tempTicket) {
+		Window.alert("Rozponano bilet na to wydarzenie. Sprawdzam...");
+		if(tempTicket.checked) {
+			Window.alert("Bilet został już użyty wcześniej");
+		} else {
+			TicketRestRequest ticketRequest = new TicketRestRequest(tempTicket.id);
+			service.updateTicketUsage(pin, selectedEventId, ticketRequest, new MethodCallback<Void>() {
+
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					Window.alert("Nieststy nie udało się zaktualizować w bazie danych. Po wyjściu z aplikacji informacja zostanie utracona");
+				}
+
+				@Override
+				public void onSuccess(Method method, Void response) {
+					Window.alert("Zaktualizowano w bazie danych");
+				}
+			});
+			tempTicket.checked = true;
+			updateTicketsWidget();
+			Window.alert("Zatwierdzono bilet: " + tempTicket.ownerFirstame);
+		}
+
+	}
+
+	private void updateTicketsWidget() {
+		ticketsWidget.clear();
+		for (Ticket ticket : ticketsByQrCode.values()) {
+			Label label = new Label(ticket.toString());
+			if(ticket.checked) {
+				label.getElement().getStyle().setBackgroundColor("GREEN");
+			}
+			ticketsWidget.add(label);
 		}
 	}
 
@@ -190,5 +228,5 @@ public class App implements EntryPoint {
 		DateTimeFormat dt1 = DateTimeFormat.getFormat("HH:mm:ss.S");
 		return dt1.format(new Date());
 	}
-	
+
 }
