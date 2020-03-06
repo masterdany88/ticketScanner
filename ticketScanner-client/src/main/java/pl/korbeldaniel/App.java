@@ -58,7 +58,7 @@ public class App implements EntryPoint {
 		ticketsWidget = new VerticalPanel();
 		VerticalPanel pinRequestBox = new VerticalPanel();
 		TextBox pinTextBox = new TextBox();
-		pinTextBox.setValue("9476176");
+		pinTextBox.setValue("9176");
 		Button pinSubmitButton = new Button("Zatwierdź");
 		pinSubmitButton.addClickHandler(new ClickHandler() {
 			@Override
