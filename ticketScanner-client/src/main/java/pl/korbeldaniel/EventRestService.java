@@ -18,17 +18,17 @@ public interface EventRestService extends RestService {
 
     @GET
     //@Options(dispatcher = PinDispatcher.class)
-    @Path("https://test.standupbilety.pl/api/events")
+    @Path("https://test.pl/api/events")
 	public void getByPinAndDate(@HeaderParam("STANDUP-PIN") int pin, @QueryParam("date") String date,
                       MethodCallback<EventRestResponse> callback);
 
     @GET
     //@Options(dispatcher = PinDispatcher.class)
-    @Path("https://test.standupbilety.pl/api/events/{eventId}/tickets")
+    @Path("https://test.pl/api/events/{eventId}/tickets")
     public void getTicketsByPinAndEventId(@HeaderParam("STANDUP-PIN") int pin, @PathParam("eventId") int eventId, MethodCallback<TicketRestResponse> callback);
 
     //post api/events/{eventId}/tickets w body ma być json np: {"tickets": [1,2,3...]} cufry to oczywiście id tick
     @POST
-    @Path("https://test.standupbilety.pl/api/events/{eventId}/tickets")
+    @Path("https://test.pl/api/events/{eventId}/tickets")
     public void updateTicketUsage(@HeaderParam("STANDUP-PIN") int pin, @PathParam("eventId") int eventId, TicketRestRequest ticketRequest, MethodCallback<Void> callback);
 }
